@@ -5,8 +5,8 @@ import logging
 
 class LagouSpider(scrapy.Spider):
     name = 'lagou'
-    allowed_domains = ['baidu.com']
-    start_urls = ['http://baidu.com/']
+    allowed_domains = ['lagou.com']
+    start_urls = ['https://lagou.com/']
 
     def parse(self, response):
         logging.debug("=" * 50)
