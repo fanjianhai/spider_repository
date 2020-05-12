@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 import scrapy
+import logging
 
 
 class LagouSpider(scrapy.Spider):
     name = 'lagou'
-    allowed_domains = ['lagou.com']
-    start_urls = ['http://lagou.com/']
+    allowed_domains = ['baidu.com']
+    start_urls = ['http://baidu.com/']
 
     def parse(self, response):
-        pass
+        logging.debug("=" * 50)
+        logging.debug(response.text)
+        logging.debug("=" * 50)
