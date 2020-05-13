@@ -37,6 +37,7 @@ DOWNLOAD_DELAY = 1
 # 10. 下载中间件
 DOWNLOADER_MIDDLEWARES = {
    '{}.middlewares.RandomUserAgent'.format(BOT_NAME): 1,
+   # '{}.middlewares.IPProxyOpenDownloadMiddleware'.format(BOT_NAME): 2,
 }
 
 # 11. 禁用cookie

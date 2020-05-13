@@ -12,19 +12,20 @@ class RandomUserAgent(object):
 
 class IPProxyOpenDownloadMiddleware(object):
     """
-    开放代理(不是免费代理哦)
+    芝麻代理：http://h.zhimaruanjian.com/getapi/) 18210836561 fanjianhaiabc123
     链接：https://pan.baidu.com/s/1U6KnIFOYhS9NT7iXd4t84g
     """
-    PROXIES = ["178.44.170.152:8080", "110.44.113.182:8000"]
+    PROXIES = ["http://110.52.224.194:4246"]
 
     def process_request(self, request, spider):
         proxy = random.choice(self.PROXIES)
         request.meta['proxy'] = proxy
+        print(proxy)
 
 
 class IPProxyExclusiveDownloadMiddleware(object):
     """
-    独享代理
+    独享代理（快代理：https://www.kuaidaili.com/pricing/#kps）
     链接：https://pan.baidu.com/s/1U6KnIFOYhS9NT7iXd4t84g
     """
     def process_request(self,request, spider):

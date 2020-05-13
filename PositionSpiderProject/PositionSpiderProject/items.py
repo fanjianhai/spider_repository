@@ -45,3 +45,5 @@ class PositionspiderprojectItem(scrapy.Item):
     companyScale = scrapy.Field()
     # 主页
     homePage = scrapy.Field()
+    # 来源
+    source = scrapy.Field()
