@@ -28,6 +28,9 @@ class DBMongo:
     def find(self):
         return self.__collection.aggregate([{"$project": {"_id": 0}}])
 
+    def find(self, aggregation_condition: list):
+        return self.__collection.aggregate(aggregation_condition)
+
 
 if __name__ == '__main__':
     dbMongo = DBMongo("db_test", "test")
