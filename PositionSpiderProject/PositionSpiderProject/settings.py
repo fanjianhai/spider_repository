@@ -1,8 +1,7 @@
 # 1.导包
-import logging
 import datetime
 import os
-
+from PositionSpiderProject.conf.common import LOG_FILE_DIR, LOG_FILE_SUFFIX
 
 # 2.项目名称
 BOT_NAME = 'PositionSpiderProject'
@@ -17,7 +16,13 @@ ROBOTSTXT_OBEY = False
 
 # 5.格式化日志输出的格式，日志文件每分钟生成一个文件
 time_str = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H-%M')
-LOG_FILE = '{}\\{}\\logs\\{}.log'.format(os.getcwd(), BOT_NAME, time_str)
+
+LOG_FILE_DIR = LOG_FILE_DIR.format(os.getcwd(), BOT_NAME)
+
+if not os.path.exists(LOG_FILE_DIR):
+   os.makedirs(LOG_FILE_DIR)
+
+LOG_FILE = LOG_FILE_DIR + LOG_FILE_SUFFIX.format(time_str)
 LOG_LEVEL = 'DEBUG'
 
 # 6.设置运行多个爬虫的自定义命令

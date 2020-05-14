@@ -1,6 +1,7 @@
 import xlsxwriter
 
-from PositionSpiderProject.conf.common import OUTPUT_EXCEL_PATH
+from PositionSpiderProject.conf.common import OUTPUT_EXCEL_DIR, EXCEL_SUFFIX
+import os
 
 
 def save_to_excel(data_list: list, excel_name="my_excel", title_name=None, title_name_end_range=None,
@@ -10,7 +11,10 @@ def save_to_excel(data_list: list, excel_name="my_excel", title_name=None, title
     @param: data_list:[{},{},{}...]
     @param: title_name_end_range 根据实际业务和excel当中的值确定
     """
-    with xlsxwriter.Workbook(OUTPUT_EXCEL_PATH.format(excel_name)) as workbook:
+    if not os.path.exists(OUTPUT_EXCEL_DIR):
+        os.makedirs(OUTPUT_EXCEL_DIR)
+
+    with xlsxwriter.Workbook(OUTPUT_EXCEL_DIR + EXCEL_SUFFIX.format(excel_name)) as workbook:
         worksheet = workbook.add_worksheet(work_sheet_name)
         title_format = workbook.add_format({'bold': True, 'border': 6,
                                             'align': 'center',  # 水平居中
