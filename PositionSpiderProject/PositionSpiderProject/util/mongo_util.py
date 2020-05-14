@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+from PositionSpiderProject.util.excel_util import save_to_excel
 
 
 class DBMongo:
@@ -25,12 +26,12 @@ class DBMongo:
         self.__collection.insert_many(value)
 
     def find(self):
-        return self.__collection.find()
+        return self.__collection.aggregate([{"$project": {"_id": 0}}])
 
 
 if __name__ == '__main__':
     dbMongo = DBMongo("db_test", "test")
-    # dbMongo.insert_one({"name": "小范", "age": 29, "hobbies": ["NBA", "乒乓球", "旅行"]})
+    # dbMongo.insert_one({"name": "小海", "age": 28,"sex":"female"})
     rets = dbMongo.find()
-    for ret in rets:
-        print(ret)
+    data_list = [i for i in rets]
+    save_to_excel(data_list, "2019年省市县列表汇总", "2019年省市县列表汇总", "C1")
