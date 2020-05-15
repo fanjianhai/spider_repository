@@ -13,3 +13,12 @@ DB_MEDCHAT_NAME = "db_medchat"
 PROVINCE_CITY_2018 = "province_city_2019"
 PROVINCE_CITY_2019 = "province_city_2019"
 
+# 对于一个网站需要爬取的招聘领域
+# FIELDS = ['Android', '大数据', 'AI', 'Java', 'Python', 'C']
+FIELDS = ['Android']
+
+# 拉钩爬取的链接
+INDEX_PAGE = "https://www.lagou.com/jobs/list_{}/p-city_0?px=new"
+LIST_PAGE = "https://www.lagou.com/jobs/positionAjax.json?px=new&needAddtionalResult=false"
+DETAIL_PAGE = "https://www.lagou.com/jobs/{}.html"
+REFFER = "https://www.lagou.com/jobs/list_{}/p-city_0?px=new"

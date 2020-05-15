@@ -2,6 +2,7 @@ import requests
 from lxml import etree
 import time
 import re
+from PositionSpiderProject.conf.common import FIELDS
 
 # 请求头
 HEADERS = {
@@ -13,8 +14,7 @@ HEADERS = {
 
 
 def request_list_page():
-    url0 = "https://www.lagou.com/jobs/list_flink/p-city_0?&cl=false&fromSearch=true&labelWords=&suginput="
-    url1 = 'https://www.lagou.com/jobs/list_python'
+    url1 = "https://www.lagou.com/jobs/list_python/p-city_0?&cl=false&fromSearch=true&labelWords=&suginput="
 
     url = 'https://www.lagou.com/jobs/positionAjax.json?needAddtionalResult=false'
 
@@ -34,11 +34,11 @@ def request_list_page():
         result = respon.json()
         positions = result['content']['positionResult']['result']
         print(positions)
-        # for position in positions:
-        #     positionId = position['positionId']
-        #     position_url = "https://www.lagou.com/jobs/{}.html".format(positionId)
-        #     parse_position_detail(position_url, s)
-        #     break
+        for position in positions:
+            positionId = position['positionId']
+            position_url = "https://www.lagou.com/jobs/{}.html".format(positionId)
+            parse_position_detail(position_url, s)
+            break
 
 
 def parse_position_detail(url, s):
