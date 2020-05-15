@@ -45,5 +45,6 @@ DOWNLOADER_MIDDLEWARES = {
    # '{}.middlewares.IPProxyOpenDownloadMiddleware'.format(BOT_NAME): 2,
 }
 
-# 11. 禁用cookie
-COOKIES_ENABLED = False
+# 11. 启用cookie
+COOKIES_ENABLED = True
+COOKIES_DEBUG = False
