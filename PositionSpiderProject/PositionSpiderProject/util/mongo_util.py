@@ -25,7 +25,7 @@ class DBMongo:
     def insert_many(self, value):
         self.__collection.insert_many(value)
 
-    def find(self):
+    def find_no_condition(self):
         return self.__collection.aggregate([{"$project": {"_id": 0}}])
 
     def find(self, aggregation_condition: list):

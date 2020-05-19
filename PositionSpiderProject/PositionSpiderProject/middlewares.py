@@ -15,7 +15,7 @@ class IPProxyOpenDownloadMiddleware(object):
     芝麻代理：http://h.zhimaruanjian.com/getapi/) 18210836561 fanjianhaiabc123
     链接：https://pan.baidu.com/s/1U6KnIFOYhS9NT7iXd4t84g
     """
-    PROXIES = ["http://110.52.224.194:4246"]
+    PROXIES = ["http://122.6.198.245:4226", "http://114.217.233.220:4276", "http://111.72.109.116:4213"]
 
     def process_request(self, request, spider):
         proxy = random.choice(self.PROXIES)

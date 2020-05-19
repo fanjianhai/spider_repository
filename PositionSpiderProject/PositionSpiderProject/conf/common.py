@@ -1,3 +1,5 @@
+import datetime
+
 # Excel 输出路径
 OUTPUT_EXCEL_DIR = r"D:\dev\spider_repository\PositionSpiderProject\PositionSpiderProject\output\excel"
 EXCEL_SUFFIX = r"\{}.xlsx"
@@ -22,3 +24,11 @@ INDEX_PAGE = "https://www.lagou.com/jobs/list_{}/p-city_0?px=new"
 LIST_PAGE = "https://www.lagou.com/jobs/positionAjax.json?px=new&needAddtionalResult=false"
 DETAIL_PAGE = "https://www.lagou.com/jobs/{}.html"
 REFFER = "https://www.lagou.com/jobs/list_{}/p-city_0?px=new"
+
+
+# 国家统计局省市县在mongodb中数据库的名称
+DB_POSITION_LAGOU = "db_positions_lagou"
+
+# 国家统计局省市县在mongodb中collection的名称
+time_str = datetime.datetime.strftime(datetime.datetime.now(), '%Y_%m_%d')
+LAGOU = "c_{}".format(time_str)
