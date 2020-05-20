@@ -8,8 +8,10 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from PositionSpiderProject.conf.common import LAGOU, DB_POSITION_LAGOU
+from PositionSpiderProject.conf.common import LAGOU, DB_POSITION_LAGOU, OUTPUT_JSON_DIR, JSON_NAME
 from PositionSpiderProject.util.mongo_util import DBMongo
+import json
+import os
 
 
 class LagouSpider(object):
@@ -24,6 +26,9 @@ class LagouSpider(object):
         self.url = 'https://www.lagou.com/jobs/list_python?labelWords=$fromSearch=true&suginput='
 
         self.mongo = DBMongo(DB_POSITION_LAGOU, LAGOU)
+
+        if not os.path.exists(OUTPUT_JSON_DIR):
+            os.makedirs(OUTPUT_JSON_DIR)
 
     def run(self):
         self.driver.get(self.url)
@@ -48,7 +53,7 @@ class LagouSpider(object):
                 try:
                     next_btn.click()
                 except Exception as e:
-                    WebDriverWait(self.driver, 60*60).until(
+                    WebDriverWait(self.driver, 60 * 60).until(
                         # 这里只能追踪的元素，不能追踪到元素的具体属性
                         EC.presence_of_element_located((By.XPATH, "//div[@class='pager_container']/span[last()]"))
                     )
@@ -93,38 +98,53 @@ class LagouSpider(object):
 
     def parse_detail_page(self, source):
         htmlE = etree.HTML(source)
-        position_name = htmlE.xpath("//div[@class='job-name']/h1/text()")[0]
-        company = htmlE.xpath("//div[@class='job-name']/h4/text()")[0]
+        positionName = htmlE.xpath("//div[@class='job-name']/h1/text()")[0]
+        companyName = htmlE.xpath("//div[@class='job-name']/h4/text()")[0]
+        companySize = htmlE.xpath("//h4[@class='c_feature_name']//text()")[2].strip()
+        industryField = htmlE.xpath("//h4[@class='c_feature_name']//text()")[0].strip()
+        financeStage = htmlE.xpath("//h4[@class='c_feature_name']//text()")[1].strip()
+        companyLink = htmlE.xpath("//h4[@class='c_feature_name']//text()")[3].strip()
         job_request_spans = htmlE.xpath("//dd[@class='job_request']//span")
-        salary = job_request_spans[0].xpath("./text()")[0].strip()
-        salary = re.sub(r"[/ \s]", "", salary)
         city = job_request_spans[1].xpath("./text()")[0].strip()
         city = re.sub(r"[/ \s]", "", city)
-        experience = job_request_spans[2].xpath("./text()")[0].strip()
-        experience = re.sub(r"[/ \s]", "", experience)
+        salary = job_request_spans[0].xpath("./text()")[0].strip()
+        salary = re.sub(r"[/ \s]", "", salary)
+        workYear = job_request_spans[2].xpath("./text()")[0].strip()
+        workYear = re.sub(r"[/ \s]", "", workYear)
         education = job_request_spans[3].xpath("./text()")[0]
         education = re.sub(r"[/ \s]", "", education)
-        type = job_request_spans[4].xpath("./text()")[0]
-        type = re.sub(r"[/ \s]", "", type)
-        job_detail = htmlE.xpath("//div[@class='job-detail']//text()")
-        job_detail = "".join(job_detail).strip()
-        print("职位：%s" % position_name)
-        print("单位：%s" % company)
-        print("")
-        print(salary + "/" + city + "/" + experience + "/" + education + "/" + type)
-        print("")
-        print(job_detail)
+        jobNature = job_request_spans[4].xpath("./text()")[0]
+        jobNature = re.sub(r"[/ \s]", "", jobNature)
+        positionAdvantage = htmlE.xpath("//dd[@class='job-advantage']//text()")
+        positionAdvantage = "".join(positionAdvantage).strip()
+        jobDetail = htmlE.xpath("//div[@class='job-detail']//text()")
+        jobDetail = "".join(jobDetail).strip()
+        workAddr = htmlE.xpath("//div[@class='work_addr']//text()")
+        workAddr = "".join(workAddr).strip()
+        workAddr = re.sub(r"[查看地图 \s]", "", workAddr)
 
         position = {
-            'name': position_name,
-            'company': company,
-            'salary': salary,
+            'positionName': positionName,
+            'companyName': companyName,
+            'companySize': companySize,
+            'industryField': industryField,
+            'financeStage': financeStage,
+            'companyLink': companyLink,
             'city': city,
-            'experience': experience,
+            'salary': salary,
+            'workYear': workYear,
             'education': education,
-            'desc': job_detail
+            'jobNature': jobNature,
+            'positionAdvantage': positionAdvantage,
+            'jobDetail': jobDetail,
+            'workAddr': workAddr,
+            'origin': "拉钩网",
         }
+        print(position)
         print("=" * 100)
+
+        with open(OUTPUT_JSON_DIR + JSON_NAME, "a", encoding="utf-8") as fp:
+            fp.write(json.dumps(position, ensure_ascii=False) + "\n")
 
         self.mongo.insert_one(position)
 
