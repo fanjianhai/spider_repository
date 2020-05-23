@@ -21,8 +21,7 @@ PROVINCE_CITY_2018 = "province_city_2019"
 PROVINCE_CITY_2019 = "province_city_2019"
 
 # 对于一个网站需要爬取的招聘领域
-# FIELDS = ['Android', '大数据', 'AI', 'Java', 'Python', 'C']
-FIELDS = ['Android']
+FIELDS = ['大数据', 'Python', 'AI', 'Java', 'Android', 'C']
 
 # 拉钩爬取的链接
 INDEX_PAGE = "https://www.lagou.com/jobs/list_{}/p-city_0?px=new"

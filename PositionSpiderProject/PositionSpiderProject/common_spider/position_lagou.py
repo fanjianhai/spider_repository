@@ -8,10 +8,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from PositionSpiderProject.conf.common import LAGOU, DB_POSITION_LAGOU, OUTPUT_JSON_DIR, JSON_NAME
+from PositionSpiderProject.conf.common import LAGOU, DB_POSITION_LAGOU, OUTPUT_JSON_DIR, JSON_NAME, INDEX_PAGE, FIELDS
 from PositionSpiderProject.util.mongo_util import DBMongo
 import json
 import os
+from urllib.parse import quote
 
 
 class LagouSpider(object):
@@ -23,7 +24,7 @@ class LagouSpider(object):
     def __init__(self):
         self.driver = webdriver.Chrome(executable_path=LagouSpider.driver_path)
         # 这个链接并不是真正招聘职位信息的链接
-        self.url = 'https://www.lagou.com/jobs/list_python?labelWords=$fromSearch=true&suginput='
+        # self.url = 'https://www.lagou.com/jobs/list_python?labelWords=$fromSearch=true&suginput='
 
         self.mongo = DBMongo(DB_POSITION_LAGOU, LAGOU)
 
@@ -31,7 +32,7 @@ class LagouSpider(object):
             os.makedirs(OUTPUT_JSON_DIR)
 
     def run(self):
-        self.driver.get(self.url)
+        self.driver.get(INDEX_PAGE.format(quote(FIELDS[0])))
         while True:
             time.sleep(2)
             source = self.driver.page_source
@@ -100,10 +101,12 @@ class LagouSpider(object):
         htmlE = etree.HTML(source)
         positionName = htmlE.xpath("//div[@class='job-name']/h1/text()")[0]
         companyName = htmlE.xpath("//div[@class='job-name']/h4/text()")[0]
-        companySize = htmlE.xpath("//h4[@class='c_feature_name']//text()")[2].strip()
-        industryField = htmlE.xpath("//h4[@class='c_feature_name']//text()")[0].strip()
-        financeStage = htmlE.xpath("//h4[@class='c_feature_name']//text()")[1].strip()
-        companyLink = htmlE.xpath("//h4[@class='c_feature_name']//text()")[3].strip()
+        companyE = htmlE.xpath("//h4[@class='c_feature_name']//text()")
+        print(len(companyE))
+        companySize = companyE[len(companyE) - 2].strip()
+        industryField = companyE[0].strip()
+        financeStage = companyE[1].strip()
+        companyLink = companyE[len(companyE) - 1].strip()
         job_request_spans = htmlE.xpath("//dd[@class='job_request']//span")
         city = job_request_spans[1].xpath("./text()")[0].strip()
         city = re.sub(r"[/ \s]", "", city)
