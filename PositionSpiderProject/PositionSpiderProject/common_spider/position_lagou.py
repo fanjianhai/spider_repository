@@ -1,5 +1,8 @@
+import json
+import os
 import re
 import time
+from urllib.parse import quote
 
 from lxml import etree
 from selenium import webdriver
@@ -8,11 +11,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from PositionSpiderProject.conf.common import LAGOU, DB_POSITION_LAGOU, OUTPUT_JSON_DIR, JSON_NAME, INDEX_PAGE, FIELDS
+from PositionSpiderProject.conf.common import LAGOU, DB_POSITION_LAGOU, OUTPUT_JSON_DIR, JSON_NAME, FIELDS, \
+    INDEX_PAGE_0, CITY_CODES
 from PositionSpiderProject.util.mongo_util import DBMongo
-import json
-import os
-from urllib.parse import quote
 
 
 class LagouSpider(object):
@@ -32,32 +33,41 @@ class LagouSpider(object):
             os.makedirs(OUTPUT_JSON_DIR)
 
     def run(self):
-        self.driver.get(INDEX_PAGE.format(quote(FIELDS[0])))
-        while True:
-            time.sleep(2)
-            source = self.driver.page_source
-            try:
-                self.driver.find_element_by_xpath("//div[@class='qr_code_content']")
-                continue
-            except NoSuchElementException as e:
-                pass
+        for i in range(len(FIELDS)):
+            for j in range(len(CITY_CODES)):
+                self.driver.get(INDEX_PAGE_0.format(quote(FIELDS[i]), CITY_CODES[j]))
+                while True:
+                    time.sleep(2)
+                    source = self.driver.page_source
+                    try:
+                        self.driver.find_element_by_xpath("//div[@class='qr_code_content']")
+                        continue
+                    except NoSuchElementException as e:
+                        pass
+                    try:
+                        WebDriverWait(self.driver, 7).until(
+                            # 这里只能追踪的元素，不能追踪到元素的具体属性
+                            EC.presence_of_element_located((By.XPATH, "//div[@class='pager_container']/span[last()]"))
+                        )
+                    except Exception as e:
+                        pass
 
-            WebDriverWait(self.driver, 7).until(
-                # 这里只能追踪的元素，不能追踪到元素的具体属性
-                EC.presence_of_element_located((By.XPATH, "//div[@class='pager_container']/span[last()]"))
-            )
-            self.parse_list_page(source)
-            next_btn = self.driver.find_element_by_xpath("//div[@class='pager_container']/span[last()]")
-            if "pager_next_disabled" in next_btn.get_attribute("class"):
-                break
-            else:
-                try:
-                    next_btn.click()
-                except Exception as e:
-                    WebDriverWait(self.driver, 60 * 60).until(
-                        # 这里只能追踪的元素，不能追踪到元素的具体属性
-                        EC.presence_of_element_located((By.XPATH, "//div[@class='pager_container']/span[last()]"))
-                    )
+                    self.parse_list_page(source)
+                    try:
+                        next_btn = self.driver.find_element_by_xpath("//div[@class='pager_container']/span[last()]")
+                    except NoSuchElementException as e:
+                        break
+
+                    if "pager_next_disabled" in next_btn.get_attribute("class"):
+                        break
+                    else:
+                        try:
+                            next_btn.click()
+                        except Exception as e:
+                            WebDriverWait(self.driver, 60 * 60).until(
+                                # 这里只能追踪的元素，不能追踪到元素的具体属性
+                                EC.presence_of_element_located((By.XPATH, "//div[@class='pager_container']/span[last()]"))
+                            )
 
     def parse_list_page(self, source):
         """解析列表"""

@@ -22,9 +22,12 @@ PROVINCE_CITY_2019 = "province_city_2019"
 
 # 对于一个网站需要爬取的招聘领域
 FIELDS = ['大数据', 'Python', 'AI', 'Java', 'Android', 'C']
+CITY_CODES = ['19','2', '3', '213', '215', '6', '252', '79', '184', '298', '129']
+CITY_LABELS = ['太原', '北京', '上海', '广州', '深圳', '杭州', '成都','南京', '武汉', '西安', '厦门']
 
 # 拉钩爬取的链接
 INDEX_PAGE = "https://www.lagou.com/jobs/list_{}/p-city_0?px=new"
+INDEX_PAGE_0 = "https://www.lagou.com/jobs/list_{}/p-city_{}?px=new"
 LIST_PAGE = "https://www.lagou.com/jobs/positionAjax.json?px=new&needAddtionalResult=false"
 DETAIL_PAGE = "https://www.lagou.com/jobs/{}.html"
 REFFER = "https://www.lagou.com/jobs/list_{}/p-city_0?px=new"
