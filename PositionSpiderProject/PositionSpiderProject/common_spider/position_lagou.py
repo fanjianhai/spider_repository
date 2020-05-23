@@ -7,6 +7,7 @@ from urllib.parse import quote
 from lxml import etree
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
@@ -20,13 +21,12 @@ class LagouSpider(object):
     """
     Selenium + ChromeDriver 拉钩爬虫
     """
-    driver_path = r"D:\chromedriver\chromedriver.exe"
+    driver_path = r"D:\chromedriver\new\chromedriver.exe"
 
     def __init__(self):
-        self.driver = webdriver.Chrome(executable_path=LagouSpider.driver_path)
-        # 这个链接并不是真正招聘职位信息的链接
-        # self.url = 'https://www.lagou.com/jobs/list_python?labelWords=$fromSearch=true&suginput='
-
+        options = Options()
+        options.add_argument('--headless')
+        self.driver = webdriver.Chrome(executable_path=LagouSpider.driver_path, options=options)
         self.mongo = DBMongo(DB_POSITION_LAGOU, LAGOU)
 
         if not os.path.exists(OUTPUT_JSON_DIR):
